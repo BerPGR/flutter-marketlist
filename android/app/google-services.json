@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "65723791055",
+    "project_id": "mercado-6ba04",
+    "storage_bucket": "mercado-6ba04.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:65723791055:android:554504a8646bc5057fe9ba",
+        "android_client_info": {
+          "package_name": "br.com.marketlist.listamercado"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYrSFTfCQxcHpQw3PYiaof4C4BGRPPatA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
