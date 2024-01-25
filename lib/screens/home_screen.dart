@@ -8,6 +8,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController _codeController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,13 +21,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () => _createGroupDialog(context),
               icon: Icon(Icons.add),
               color: Color(0xFFFFFfff)),
           IconButton(
             onPressed: () {},
             icon: Icon(Icons.search),
-            color: Color(0xFFFFFfff),
+            color: Color.fromARGB(255, 189, 159, 159),
           )
         ],
         backgroundColor: Color(0xFF2196F3),
@@ -46,5 +49,34 @@ class _HomeScreenState extends State<HomeScreen> {
         ]),
       ),
     );
+  }
+
+  Future<void> _createGroupDialog(context) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: Text('Crie seu grupo!'),
+              content: Column(
+                children: [
+                  TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(labelText: "Nome do grupo"),
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  TextField(
+                    controller: _codeController,
+                    decoration: InputDecoration(labelText: "Código do grupo"),
+                  )
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('OK'),
+                ),
+              ],
+            ));
   }
 }
