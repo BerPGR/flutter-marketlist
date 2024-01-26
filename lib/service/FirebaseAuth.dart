@@ -9,16 +9,28 @@ class AuthService {
 
   Future<void> registerWithEmailAndPassword(
       String email, String password, String name) async {
-    await _auth.createUserWithEmailAndPassword(
-        email: email, password: password);
+    try {
+      await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+    } catch (e) {
+      print(e.toString());
+    }
 
-    if (_auth.currentUser!.displayName == null) {
-      await _auth.currentUser!.updateDisplayName(name);
+    try {
+      if (_auth.currentUser?.displayName == null) {
+        await _auth.currentUser?.updateDisplayName(name);
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 
   Future<void> signInWithEmailAndPassword(String email, String password) async {
-    await _auth.signInWithEmailAndPassword(email: email, password: password);
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future<void> singOut() async {

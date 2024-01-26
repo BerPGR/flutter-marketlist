@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:listamercado/screens/login_register_screen.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:listamercado/screens/home_screen.dart';
@@ -22,6 +24,24 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: HomeScreen());
+        home: WidgetTree());
+  }
+}
+
+class WidgetTree extends StatelessWidget {
+  const WidgetTree({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData)
+              return HomeScreen();
+            else
+              return LoginScreen();
+          }),
+    );
   }
 }

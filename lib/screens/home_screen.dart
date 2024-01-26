@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:listamercado/service/FirebaseAuth.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -8,6 +10,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final User? user = AuthService().currentUser;
+  final AuthService _auth = AuthService();
   final TextEditingController _codeController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
 
@@ -16,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'My List',
+          '${user?.displayName}',
           style: TextStyle(color: Color(0xFFFFFFFF)),
         ),
         actions: [
@@ -25,9 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: Icon(Icons.add),
               color: Color(0xFFFFFfff)),
           IconButton(
-            onPressed: () {},
+            onPressed: () => _auth.singOut(),
             icon: Icon(Icons.search),
-            color: Color.fromARGB(255, 189, 159, 159),
+            color: Color(0xFFFFFfff),
           )
         ],
         backgroundColor: Color(0xFF2196F3),
