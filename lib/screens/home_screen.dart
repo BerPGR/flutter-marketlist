@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:listamercado/service/FirebaseAuth.dart';
@@ -14,15 +15,13 @@ class _HomeScreenState extends State<HomeScreen> {
   final AuthService _auth = AuthService();
   final TextEditingController _codeController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          '${user?.displayName}',
-          style: TextStyle(color: Color(0xFFFFFFFF)),
-        ),
+        title: Text("MarketList"),
         actions: [
           IconButton(
               onPressed: () => _createGroupDialog(context),
@@ -49,7 +48,35 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Text("0/5")
                 ]),
-          )
+          ),
+          StreamBuilder(
+              stream: _firestore.collection('groups').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                }
+                if (!snapshot.hasData) {
+                  return Text('Não há grupos');
+                } else {
+                  var groups = snapshot.data!.docs;
+
+                  List<String> groupNames =
+                      groups.map((group) => group['name'] as String).toList();
+
+                  if (groupNames.isEmpty) {
+                    return Text('Não há grupos');
+                  } else {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemCount: groupNames.length,
+                      itemBuilder: (context, index) {
+                        return Text(groupNames[index]);
+                      },
+                    );
+                  }
+                }
+              })
         ]),
       ),
     );
