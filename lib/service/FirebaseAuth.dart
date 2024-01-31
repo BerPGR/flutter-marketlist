@@ -20,7 +20,7 @@ class AuthService {
         'uid': _auth.currentUser?.uid,
         'name': name,
         'email': email,
-        'creationDate': new DateTime.timestamp()
+        'creationDate': Timestamp.now()
       });
     } catch (e) {
       print(e.toString());

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:listamercado/service/FirebaseAuth.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -60,26 +61,37 @@ class _HomeScreenState extends State<HomeScreen> {
                 } else {
                   var groups = snapshot.data!.docs;
 
-                  List<String> groupNames =
-                      groups.map((group) => group['name'] as String).toList();
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    itemCount: groups.length,
+                    itemBuilder: (context, index) {
+                      var group = groups[index];
+                      var groupData = group.data() as Map<String, dynamic>;
 
-                  if (groupNames.isEmpty) {
-                    return Text('Não há grupos');
-                  } else {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      itemCount: groupNames.length,
-                      itemBuilder: (context, index) {
-                        return Text(groupNames[index]);
-                      },
-                    );
-                  }
+                      return ListTile(
+                        title: Text("${groupData['nome']}"),
+                        leading: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () => _deleteGroup(group.id),
+                        ),
+                      );
+                    },
+                  );
                 }
               })
         ]),
       ),
     );
+  }
+
+  Future<void> _deleteGroup(String groupId) async {
+    try {
+      await _firestore.collection('groups').doc(groupId).delete();
+      Fluttertoast.showToast(msg: 'Grupo deletado');
+    } catch (e) {
+      Fluttertoast.showToast(msg: 'Erro ao apagar grupo');
+    }
   }
 
   Future<void> _createGroupDialog(context) async {
@@ -104,7 +116,38 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               actions: [
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () async {
+                    try {
+                      if ((_codeController.text.isNotEmpty &&
+                              _codeController.text.length == 6) &&
+                          _nameController.text.isNotEmpty) {
+                        await _firestore.collection('groups').add({
+                          'nome': _nameController.text,
+                          'code': _codeController.text,
+                          'createdAt': Timestamp.now(),
+                          'createdBy': user?.uid,
+                          'users': [user?.uid]
+                        }).then((value) => Fluttertoast.showToast(
+                                msg: "Grupo Criado!",
+                                toastLength: Toast.LENGTH_LONG,
+                                gravity: ToastGravity.BOTTOM,
+                                backgroundColor: Colors.red)
+                            .then((value) => Navigator.pop(context)));
+                      } else {
+                        Fluttertoast.showToast(
+                            msg: "Aqui",
+                            toastLength: Toast.LENGTH_LONG,
+                            gravity: ToastGravity.CENTER,
+                            backgroundColor: Colors.red);
+                      }
+                    } catch (e) {
+                      Fluttertoast.showToast(
+                          msg: "${e.toString()}",
+                          toastLength: Toast.LENGTH_LONG,
+                          gravity: ToastGravity.CENTER,
+                          backgroundColor: Colors.red);
+                    }
+                  },
                   child: Text('OK'),
                 ),
               ],
